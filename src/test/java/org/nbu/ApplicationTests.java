@@ -1,4 +1,4 @@
-package com.logisticscompany;
+package org.nbu;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
