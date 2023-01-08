@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  logistics-company-backend:
+    image: logistics-company-backend-image:latest
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    container_name: logistics-company-backend
+    depends_on:
+      - logistics-company-database
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://logistics-company-database:5432/logistics-company-db
+      - SPRING_DATASOURCE_USERNAME=logistics-company-db-user
+      - SPRING_DATASOURCE_PASSWORD=logistics-company-db-password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    
+  logistics-company-database:
+    image: postgres
+    container_name: logistics-company-database
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=logistics-company-db
+      - POSTGRES_USER=logistics-company-db-user
+      - POSTGRES_PASSWORD=logistics-company-db-password
