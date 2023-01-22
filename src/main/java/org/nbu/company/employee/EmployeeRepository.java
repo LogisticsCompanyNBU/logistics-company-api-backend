@@ -1,4 +1,4 @@
-package org.nbu.employee;
+package org.nbu.company.employee;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

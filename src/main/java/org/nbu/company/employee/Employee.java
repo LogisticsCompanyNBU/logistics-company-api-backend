@@ -1,10 +1,10 @@
-package org.nbu.client;
+package org.nbu.company.employee;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "client")
-public class Client {
+@Table(name = "employee")
+public class Employee {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
