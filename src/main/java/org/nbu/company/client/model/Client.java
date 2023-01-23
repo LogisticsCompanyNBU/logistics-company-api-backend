@@ -1,14 +1,17 @@
-package org.nbu.company.employee.model;
+package org.nbu.company.client.model;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.nbu.company.model.Company;
 import org.nbu.shared.User;
 
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -17,10 +20,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Getter
 @Entity
-@Table(name = "employees")
-public class Employee extends User {
+@Table(name = "clients")
+public class Client extends User {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
+    @Default
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Company> company = new ArrayList<>();
 }

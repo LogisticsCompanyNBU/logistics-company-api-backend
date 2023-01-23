@@ -1,4 +1,4 @@
-package org.nbu.company.employee.rest;
+package org.nbu.shared;
 
 import java.text.MessageFormat;
 

@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -19,16 +21,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
     public ResponseEntity<ErrorDTO> handleEntityAlreadyExistsException(EntityAlreadyExistsException exception) {
+        log.error(exception.getMessage(), exception);
         return buildErrorResponseEntity(HttpStatus.CONFLICT, exception);
     }
 
     @ExceptionHandler(EntityDoesNotExistException.class)
     public ResponseEntity<ErrorDTO> handleEntityDoesNotExistException(EntityDoesNotExistException exception) {
+        log.error(exception.getMessage(), exception);
         return buildErrorResponseEntity(HttpStatus.NOT_FOUND, exception);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorDTO> handleGenericException(Throwable exception) {
+        log.error(exception.getMessage(), exception);
         return ResponseEntity.internalServerError()
                              .body(buildErrorDto(constructMessage(exception)));
     }
