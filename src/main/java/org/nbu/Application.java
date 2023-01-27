@@ -2,14 +2,8 @@ package org.nbu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@ComponentScan(basePackages = "org.nbu")
 @SpringBootApplication
-@EntityScan("org.nbu.*")
-@EnableJpaRepositories
 public class Application {
 
     public static void main(String[] args) {

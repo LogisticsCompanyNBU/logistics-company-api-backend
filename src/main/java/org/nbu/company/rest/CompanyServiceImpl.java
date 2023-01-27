@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
 
+import java.util.Date;
+
 import static org.nbu.utils.AttributeMerger.mergeAttribute;
 
 @RestController
@@ -26,7 +28,7 @@ public class CompanyServiceImpl implements CompanyApi {
     @Modifying
     @Override
     public ResponseEntity<Company> createCompany(Company company) {
-        Company company1 = companyRepository.saveAndFlush(company);
+        Company company1 = companyRepository.save(company);
         return ResponseEntity.ok(company1);
     }
 
@@ -50,9 +52,10 @@ public class CompanyServiceImpl implements CompanyApi {
     private Company merge(Company original, Company delta) {
         return Company.builder()
                 .id(original.getId())
-                .companyOffice(mergeAttribute(original.getCompanyOffice(), delta.getCompanyOffice()))
-                .clientList(mergeAttribute(original.getClientList(), delta.getClientList()))
-                .shipmentList(mergeAttribute(original.getShipmentList(), delta.getShipmentList()))
-                .employees(mergeAttribute(original.getEmployees(), delta.getEmployees())).build();
+                .centralAddress(mergeAttribute(original.getCentralAddress(), delta.getCentralAddress()))
+                .clients(mergeAttribute(original.getClients(), delta.getClients()))
+                .shipments(mergeAttribute(original.getShipments(), delta.getShipments()))
+                .employees(mergeAttribute(original.getEmployees(), delta.getEmployees()))
+                .updatedAt(new Date()).build();
     }
 }
