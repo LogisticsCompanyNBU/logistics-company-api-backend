@@ -16,11 +16,12 @@ import java.util.Date;
 import static org.nbu.utils.AttributeMerger.mergeAttribute;
 
 @RestController
-public class CompanyServiceImpl implements CompanyApi {
-    @Autowired
+public class CompanyApiImpl implements CompanyApi {
+
     private final CompanyRepository companyRepository;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository) {
+    @Autowired
+    public CompanyApiImpl(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
 

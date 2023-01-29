@@ -19,7 +19,6 @@ import org.nbu.company.shipment.Shipment;
 @AllArgsConstructor
 @Builder
 @Getter
-@Setter
 @Entity
 @Table(name = "companies")
 public class Company {
