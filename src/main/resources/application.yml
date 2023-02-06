@@ -1,0 +1,17 @@
+server:
+  port: 8081
+logging:
+  level:
+    ROOT: DEBUG
+keycloak-admin-client-configuration:
+  realm: LogisticsCompanyRealm
+  client-id: logistics-company-client
+  server-url: http://keycloak:8080/auth/
+  secret: vt01I2PYEPtVDs7MRwHJ9pWr4ufnoFvI
+  
+keycloak:
+  realm: LogisticsCompanyRealm
+  auth-server-url: http://keycloak:8080/auth
+  resource: logistics-company-app
+  bearer-only: true
+  use-resource-role-mappings: false

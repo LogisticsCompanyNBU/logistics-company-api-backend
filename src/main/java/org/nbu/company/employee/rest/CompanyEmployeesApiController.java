@@ -9,6 +9,9 @@ import org.nbu.company.employee.rest.api.CompanyEmployeesApi;
 import org.nbu.company.model.Company;
 import org.nbu.company.persistence.CompanyRepository;
 import org.nbu.shared.AbstractCompanyUserApiController;
+import org.nbu.shared.ApplicationRole;
+import org.nbu.shared.keycloak.repository.KeycloakRoleRepository;
+import org.nbu.shared.keycloak.repository.KeycloakUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +22,14 @@ public class CompanyEmployeesApiController extends AbstractCompanyUserApiControl
     implements CompanyEmployeesApi {
 
     @Autowired
-    public CompanyEmployeesApiController(CompanyRepository companyRepository, EmployeeRepository employeeRepository) {
-        super(companyRepository, employeeRepository);
+    public CompanyEmployeesApiController(CompanyRepository companyRepository, EmployeeRepository employeeRepository,
+                                         KeycloakUserRepository keycloakUserRepository, KeycloakRoleRepository keycloakRoleRepository) {
+        super(companyRepository, employeeRepository, keycloakUserRepository, keycloakRoleRepository);
     }
 
     @Override
-    public ResponseEntity<Employee> createCompanyEmployee(int companyId, Employee employee) {
-        Employee createdEmployee = createCompanyUser(companyId, employee);
+    public ResponseEntity<Employee> registerCompanyEmployee(int companyId, Employee employee) {
+        Employee createdEmployee = createCompanyUser(companyId, employee, ApplicationRole.COMPANY_EMPLOYEE);
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(createdEmployee);
     }

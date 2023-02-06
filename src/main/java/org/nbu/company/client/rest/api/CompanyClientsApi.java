@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public interface CompanyClientsApi {
     @PostMapping(value = "/api/companies/{companyId}/clients", consumes = { "application/json" }, produces = { "application/json" })
-    ResponseEntity<Client> createCompanyClient(@PathVariable("companyId") int companyId, @Valid @RequestBody Client client);
+    ResponseEntity<Client> registerCompanyClient(@PathVariable("companyId") int companyId, @Valid @RequestBody Client client);
 
     @DeleteMapping("/api/companies/{companyId}/clients/{clientId}")
     ResponseEntity<Void> deleteCompanyClientById(@PathVariable("companyId") int companyId, @PathVariable("clientId") int clientId);

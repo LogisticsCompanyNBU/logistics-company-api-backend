@@ -12,6 +12,9 @@ import org.nbu.company.client.rest.api.CompanyClientsApi;
 import org.nbu.company.model.Company;
 import org.nbu.company.persistence.CompanyRepository;
 import org.nbu.shared.AbstractCompanyUserApiController;
+import org.nbu.shared.ApplicationRole;
+import org.nbu.shared.keycloak.repository.KeycloakRoleRepository;
+import org.nbu.shared.keycloak.repository.KeycloakUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +25,15 @@ public class CompanyClientsApiController extends AbstractCompanyUserApiControlle
     implements CompanyClientsApi {
 
     @Autowired
-    protected CompanyClientsApiController(CompanyRepository companyRepository, ClientRepository userRepository) {
-        super(companyRepository, userRepository);
+    protected CompanyClientsApiController(CompanyRepository companyRepository, ClientRepository userRepository,
+                                          KeycloakUserRepository keycloakUserRepository, KeycloakRoleRepository keycloakRoleRepository) {
+        super(companyRepository, userRepository, keycloakUserRepository, keycloakRoleRepository);
     }
 
     @Override
-    public ResponseEntity<Client> createCompanyClient(int companyId, Client client) {
+    public ResponseEntity<Client> registerCompanyClient(int companyId, Client client) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                             .body(createCompanyUser(companyId, client));
+                             .body(createCompanyUser(companyId, client, ApplicationRole.COMPANY_CLIENT));
     }
 
     @Override
