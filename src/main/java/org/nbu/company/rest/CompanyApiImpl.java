@@ -41,22 +41,27 @@ public class CompanyApiImpl implements CompanyApi {
 
     @Override
     public ResponseEntity<Company> getCompanyById(int companyId) {
-        return ResponseEntity.ok(companyRepository.findById(companyId).orElse(null));
+        return ResponseEntity.ok(companyRepository.findById(companyId)
+                                                  .orElse(null));
     }
 
     @Override
     public ResponseEntity<Company> updateCompanyById(int companyId, Company company) {
-        Company company1 = companyRepository.findById(companyId).orElse(null);
+        Company company1 = companyRepository.findById(companyId)
+                                            .orElse(null);
         return ResponseEntity.ok(companyRepository.save(merge(company1, company)));
     }
 
     private Company merge(Company original, Company delta) {
         return Company.builder()
-                .id(original.getId())
-                .centralAddress(mergeAttribute(original.getCentralAddress(), delta.getCentralAddress()))
-                .clients(mergeAttribute(original.getClients(), delta.getClients()))
-                .shipments(mergeAttribute(original.getShipments(), delta.getShipments()))
-                .employees(mergeAttribute(original.getEmployees(), delta.getEmployees()))
-                .updatedAt(new Date()).build();
+                      .id(original.getId())
+                      .centralAddress(mergeAttribute(original.getCentralAddress(), delta.getCentralAddress()))
+                      .name(original.getName())
+                      .clients(mergeAttribute(original.getClients(), delta.getClients()))
+                      .shipments(mergeAttribute(original.getShipments(), delta.getShipments()))
+                      .employees(mergeAttribute(original.getEmployees(), delta.getEmployees()))
+                      .createdAt(original.getCreatedAt())
+                      .updatedAt(new Date())
+                      .build();
     }
 }

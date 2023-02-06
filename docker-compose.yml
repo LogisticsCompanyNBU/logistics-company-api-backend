@@ -10,7 +10,7 @@ services:
     depends_on:
       - logistics-company-database
     ports:
-      - 8080:8080
+      - 8081:8081
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://logistics-company-database:5432/logistics-company-db
       - SPRING_DATASOURCE_USERNAME=logistics-company-db-user
@@ -21,8 +21,40 @@ services:
     image: postgres
     container_name: logistics-company-database
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       - POSTGRES_DB=logistics-company-db
       - POSTGRES_USER=logistics-company-db-user
       - POSTGRES_PASSWORD=logistics-company-db-password
+      
+  keycloak-database:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+      
+  keycloak:
+    image: quay.io/keycloak/keycloak:legacy
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-database
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_HOSTNAME: "keycloak"
+      KEYCLOAK_HTTP_PORT: 8080
+      DEBUG: "true"
+    ports:
+      - 8080:8080
+    depends_on:
+      - keycloak-database
+      
+volumes:
+  postgres_data:
+    driver: local

@@ -15,7 +15,9 @@ import org.nbu.utils.AttributeMerger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class CompanyLocationsApiImpl extends BaseCompanyController implements CompanyLocationsApi {
 
     private CompanyLocationRepository companyLocationRepository;
@@ -56,7 +58,7 @@ public class CompanyLocationsApiImpl extends BaseCompanyController implements Co
     @Override
     public ResponseEntity<List<CompanyLocation>> getAllCompanyLocations(int companyId) {
         Company company = getCompanyById(companyId);
-        return ResponseEntity.ok(company.getCompanyLocations());
+        return ResponseEntity.ok(companyLocationRepository.findAllByCompany(company));
     }
 
     @Override
