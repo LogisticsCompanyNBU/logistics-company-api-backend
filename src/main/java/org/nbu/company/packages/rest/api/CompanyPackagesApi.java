@@ -34,7 +34,8 @@ public interface CompanyPackagesApi {
 
     @GetMapping(value = "/api/companies/{companyId}/packages", produces = { "application/json" })
     ResponseEntity<List<Package>> getAllCompanyPackages(@PathVariable("companyId") int companyId, @RequestParam Optional<String> status,
-                                                        @RequestParam Optional<Integer> sender, @RequestParam Optional<Integer> recipient);
+                                                        @RequestParam Optional<Integer> sender, @RequestParam Optional<Integer> recipient,
+                                                        @RequestParam Optional<Integer> employee);
 
     @GetMapping(value = "/api/companies/{companyId}/employees/{employeeId}/packages", produces = { "application/json" })
     ResponseEntity<List<Package>> getAllCompanyPackagesByEmployeeId(@PathVariable("companyId") int companyId,

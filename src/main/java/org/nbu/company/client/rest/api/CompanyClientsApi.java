@@ -28,7 +28,7 @@ public interface CompanyClientsApi {
     @PatchMapping(value = "/api/companies/{companyId}/clients/{clientId}", produces = { "application/json" }, consumes = {
         "application/json" })
     ResponseEntity<Client> updateCompanyClientById(@PathVariable("companyId") int companyId, @PathVariable("clientId") int clientId,
-                                                   @Valid @RequestBody Client client);
+                                                   @RequestBody Client client);
 
     @GetMapping(value = "/api/companies/{companyId}/clients", produces = { "application/json" })
     ResponseEntity<List<Client>> getAllCompanyClients(@PathVariable("companyId") int companyId);
