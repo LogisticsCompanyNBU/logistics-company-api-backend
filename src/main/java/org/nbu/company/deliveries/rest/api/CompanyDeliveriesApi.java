@@ -1,24 +1,34 @@
 package org.nbu.company.deliveries.rest.api;
 
-import org.nbu.company.deliveries.model.Delivery;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.List;
+
+import org.nbu.company.deliveries.model.Delivery;
+import org.nbu.company.deliveries.model.DeliveryDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public interface CompanyDeliveriesApi {
-    @PostMapping(value = "/api/package/{packageId}/addresstype/{addresstypeId}/status/{statusId}", consumes = { "application/json" }, produces = { "application/json" })
-    ResponseEntity<Delivery> createCompanyDelivery(@PathVariable("addresstypeId") int addresstypeId,
-                                                  @PathVariable("statusId") int statusId, @Valid @RequestBody Delivery delivery);
 
-    @DeleteMapping("/api/deliveries/package/{packageId}")
-    ResponseEntity<Void> deleteCompanyDeliveryById(@PathVariable("deliveryId") int deliveryId);
+    @DeleteMapping(value = "/api/companies/{companyId}/packages/{packageId}/deliveries/{deliveryId}")
+    ResponseEntity<Delivery> deleteCompanyPackageDeliveryById(@PathVariable("companyId") int companyId,
+                                                              @PathVariable("packageId") int packageId,
+                                                              @PathVariable("deliveryId") int deliveryId);
 
-    @GetMapping(value = "/api/deliveries/packages/{packageId}", produces = { "application/json" })
-    ResponseEntity<Delivery> getCompanyDeliveryById(@PathVariable("deliveryId") int deliveryId);
+    // update delivery by setting the status ONLY to DELIVERED
+    @PatchMapping(value = "/api/companies/{companyId}/packages/{packageId}/deliveries/{deliveryId}", produces = { "application/json" })
+    ResponseEntity<Delivery>
+                  updateCompanyPackageDeliveryById(@PathVariable("companyId") int companyId, @PathVariable("packageId") int packageId,
+                                                   @PathVariable("deliveryId") int deliveryId, @Valid @RequestBody DeliveryDto deliveryDto);
 
-    @GetMapping(value = "/api/companies/{companyId}/packages", produces = { "application/json" })
-    ResponseEntity<List<Delivery>> getAllCompanyDeliveries();
+    // get a delivery by id
+    @GetMapping(value = "/api/companies/{companyId}/packages/{packageId}/deliveries/{deliveryId}", produces = { "application/json" })
+    ResponseEntity<Delivery> getCompanyPackageDeliveryById(@PathVariable("companyId") int companyId,
+                                                           @PathVariable("packageId") int packageId,
+                                                           @PathVariable("deliveryId") int deliveryId);
 }

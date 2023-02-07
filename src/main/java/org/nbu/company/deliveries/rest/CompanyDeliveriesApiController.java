@@ -1,66 +1,87 @@
 package org.nbu.company.deliveries.rest;
 
+import static org.nbu.utils.AttributeMerger.mergeAttribute;
+
+import java.text.MessageFormat;
+
 import org.nbu.company.deliveries.model.Delivery;
-import org.nbu.company.deliveries.persistence.AddressTypeRepository;
+import org.nbu.company.deliveries.model.DeliveryDto;
 import org.nbu.company.deliveries.persistence.DeliveryRepository;
-import org.nbu.company.deliveries.persistence.StatusRepository;
 import org.nbu.company.deliveries.rest.api.CompanyDeliveriesApi;
+import org.nbu.company.model.Company;
 import org.nbu.company.packages.model.Package;
 import org.nbu.company.packages.persistence.PackageRepository;
-import org.springframework.http.HttpStatus;
+import org.nbu.company.persistence.CompanyRepository;
+import org.nbu.exception.EntityDoesNotExistException;
+import org.nbu.shared.BaseCompanyController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
-public class CompanyDeliveriesApiController implements CompanyDeliveriesApi {
+public class CompanyDeliveriesApiController extends BaseCompanyController implements CompanyDeliveriesApi {
     private final DeliveryRepository deliveryRepository;
-    private final StatusRepository statusRepository;
-    private final AddressTypeRepository addressTypeRepository;
     private final PackageRepository packageRepository;
 
-    public CompanyDeliveriesApiController(DeliveryRepository deliveryRepository,
-                                          StatusRepository statusRepository,
-                                          AddressTypeRepository addressTypeRepository,
-                                          PackageRepository packageRepository) {
+    public CompanyDeliveriesApiController(DeliveryRepository deliveryRepository, PackageRepository packageRepository,
+                                          CompanyRepository companyRepository) {
+        super(companyRepository);
         this.deliveryRepository = deliveryRepository;
-        this.statusRepository = statusRepository;
-        this.addressTypeRepository = addressTypeRepository;
         this.packageRepository = packageRepository;
     }
 
-
     @Override
-    public ResponseEntity<Delivery> createCompanyDelivery(int addresstypeId, int statusId, Delivery delivery) {
-        Delivery deliveryPers = deliveryRepository.save(getDeliveryForPersisting(addresstypeId, statusId, delivery));
-        return ResponseEntity.ok(deliveryPers);
+    public ResponseEntity<Delivery> deleteCompanyPackageDeliveryById(int companyId, int packageId, int deliveryId) {
+        Delivery foundDelivery = findDelivery(companyId, packageId, deliveryId);
+        Package foundPackage = findDeliveryPackage(companyId, packageId, deliveryId);
+        deliveryRepository.delete(foundDelivery);
+        packageRepository.save(foundPackage.toBuilder()
+                                           .delivery(null)
+                                           .build());
+        return ResponseEntity.noContent()
+                             .build();
     }
 
     @Override
-    public ResponseEntity<Void> deleteCompanyDeliveryById(int deliveryId) {
-        deliveryRepository.deleteById(deliveryId);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+    public ResponseEntity<Delivery> updateCompanyPackageDeliveryById(int companyId, int packageId, int deliveryId,
+                                                                     DeliveryDto deliveryDto) {
+        Delivery foundDelivery = findDelivery(companyId, packageId, deliveryId);
+        return ResponseEntity.ok(deliveryRepository.save(updateDelivery(deliveryDto, foundDelivery)));
     }
 
-    @Override
-    public ResponseEntity<Delivery> getCompanyDeliveryById(int deliveryId) {
-        return ResponseEntity.ok(deliveryRepository.findById(deliveryId).orElse(null));
-    }
-
-    @Override
-    public ResponseEntity<List<Delivery>> getAllCompanyDeliveries() {
-        List<Delivery> result = new ArrayList<>();
-        deliveryRepository.findAll().forEach(result::add);
-        return ResponseEntity.ok(result);
-    }
-
-    private Delivery getDeliveryForPersisting(int addresstypeId, int statusId, Delivery delivery) {
+    private Delivery updateDelivery(DeliveryDto delta, Delivery original) {
         return Delivery.builder()
-                .status(statusRepository.findById(statusId).orElse(null))
-                .deliveryPrice(delivery.getDeliveryPrice())
-                .addressType(addressTypeRepository.findById(addresstypeId).orElse(null))
-                .build();
+                       .id(original.getId())
+                       .status(mergeAttribute(original.getStatus(), delta.getStatus()))
+                       .deliveryAddress(mergeAttribute(original.getDeliveryAddress(), delta.getDeliveryAddress()))
+                       .addressType(mergeAttribute(original.getAddressType(), delta.getAddressType()))
+                       .createdAt(original.getCreatedAt())
+                       .deliveryPrice(original.getDeliveryPrice())
+                       .build();
+    }
+
+    @Override
+    public ResponseEntity<Delivery> getCompanyPackageDeliveryById(int companyId, int packageId, int deliveryId) {
+        Delivery foundDelivery = findDelivery(companyId, packageId, deliveryId);
+        return ResponseEntity.ok(foundDelivery);
+    }
+
+    private Delivery findDelivery(int companyId, int packageId, int deliveryId) {
+        findDeliveryPackage(companyId, packageId, deliveryId);
+        Delivery foundDelivery = deliveryRepository.findById(deliveryId)
+                                                   .orElse(null);
+        if (foundDelivery == null) {
+            throw new EntityDoesNotExistException(MessageFormat.format("Delivery with id \"{0}\" does not exist", deliveryId));
+        }
+        return foundDelivery;
+    }
+
+    private Package findDeliveryPackage(int companyId, int packageId, int deliveryId) {
+        Company company = getCompanyById(companyId);
+        Package deliveryPackage = packageRepository.findByCompanyAndId(company, packageId);
+        if (deliveryPackage == null) {
+            throw new EntityDoesNotExistException(MessageFormat.format("Package with id \"{0}\" for delivery with id \"{1}\" and company \"{2}\" does not exist",
+                                                                       packageId, deliveryId, companyId));
+        }
+        return deliveryPackage;
     }
 }

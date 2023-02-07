@@ -1,21 +1,18 @@
 package org.nbu.company.packages.persistence;
 
-import org.nbu.company.employee.model.Employee;
-import org.nbu.company.packages.model.Package;
-import org.nbu.shared.UserRepository;
-import org.springframework.data.repository.CrudRepository;
-
 import java.util.List;
 
+import org.nbu.company.model.Company;
+import org.nbu.company.packages.model.Package;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface PackageRepository extends CrudRepository<Package, Integer> {
-    List<Package> findByEmployee_Id(int employeeId);
+    List<Package> findByCompanyAndEmployee_Id(Company company, int employeeId);
 
-    List<Package> findByDeliveries_Status_Status(String status);
+    Package findByCompanyAndId(Company company, int packageId);
 
-    List<Package> findByClientSender_Id(int clientSenderId);
-
-    List<Package> findByClientRecipient_Id(int clientRecipientId);
-
-
+    List<Package> findAllPackagesByCompany(Company company);
 
 }

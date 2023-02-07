@@ -31,6 +31,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(HttpStatus.NOT_FOUND, exception);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorDTO> handleBadRequestException(BadRequestException exception) {
+        log.error(exception.getMessage(), exception);
+        return buildErrorResponseEntity(HttpStatus.BAD_REQUEST, exception);
+    }
+
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorDTO> handleGenericException(Throwable exception) {
         log.error(exception.getMessage(), exception);
