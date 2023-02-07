@@ -45,7 +45,7 @@ public class CompanyClientsApiController extends AbstractCompanyUserApiControlle
     }
 
     @Override
-    public ResponseEntity<Client> updateCompanyClientById(int companyId, int clientId, @Valid Client client) {
+    public ResponseEntity<Client> updateCompanyClientById(int companyId, int clientId, Client client) {
         Client updatedClient = updateUser(companyId, clientId, client);
         return ResponseEntity.ok(updatedClient);
     }

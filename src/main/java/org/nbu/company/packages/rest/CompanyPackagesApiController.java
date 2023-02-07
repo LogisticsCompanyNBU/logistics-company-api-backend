@@ -102,7 +102,7 @@ public class CompanyPackagesApiController extends BaseCompanyController implemen
 
     @Override
     public ResponseEntity<List<Package>> getAllCompanyPackages(int companyId, Optional<String> status, Optional<Integer> sender,
-                                                               Optional<Integer> recipient) {
+                                                               Optional<Integer> recipient, Optional<Integer> employee) {
         Company foundCompany = getCompanyById(companyId);
         // List<Package> allCompanyPackages =
         // packageRepository.findAllPackagesByCompanyAndClientSender_IdOrClientRecipient_IdOrDelivery_Status(foundCompany,
@@ -115,6 +115,7 @@ public class CompanyPackagesApiController extends BaseCompanyController implemen
                                                            .filter(filterByStatus(status))
                                                            .filter(filterBySender(sender))
                                                            .filter(filterByRecipient(recipient))
+                                                           .filter(filterByEmployee(employee))
                                                            .collect(Collectors.toList());
         return ResponseEntity.ok(filteredPackages);
     }
@@ -140,6 +141,14 @@ public class CompanyPackagesApiController extends BaseCompanyController implemen
         if (recipient.isPresent()) {
             return p -> p.getClientRecipient()
                          .getId() == recipient.get();
+        }
+        return p -> true;
+    }
+
+    private Predicate<Package> filterByEmployee(Optional<Integer> employee) {
+        if (employee.isPresent()) {
+            return p -> p.getEmployee()
+                         .getId() == employee.get();
         }
         return p -> true;
     }
