@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="div1"></div>
+
+    <script>
+      const test = async function () {
+        const getAccessToken = async function () {
+          const authenticationData = {
+            client_id: 'logistics-company-client',
+            username: 'company-admin-1',
+            password: 'test',
+            grant_type: 'password',
+            client_secret: 'vt01I2PYEPtVDs7MRwHJ9pWr4ufnoFvI',
+          };
+          var formBody = [];
+          for (var property in authenticationData) {
+            var encodedKey = property;
+            var encodedValue = authenticationData[property];
+            formBody.push(encodedKey + '=' + encodedValue);
+          }
+          formBody = formBody.join('&');
+          const authenticationResult = await fetch(
+            'http://localhost:8080/auth/realms/LogisticsCompanyRealm/protocol/openid-connect/token/',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: formBody,
+            },
+          );
+          console.log(authenticationResult.ok);
+          const test = await authenticationResult.json();
+          console.log(test.access_token);
+          return test.access_token;
+        };
+
+        const fetchData = async function (access_token) {
+          console.log(`Using access token: ${access_token}`);
+          const res = await fetch(
+            'http://localhost:8081/api/companies/1/packages'
+          );
+          const receivedData = await res.json();
+          const para = document.createElement('p');
+          const node = document.createTextNode(
+            JSON.stringify(receivedData),
+            null,
+            2,
+          );
+          para.appendChild(node);
+          const element = document.getElementById('div1');
+          element.appendChild(para);
+        };
+        const accessToken = await getAccessToken();
+        fetchData(accessToken);
+      };
+			test();
+    </script>
+  </body>
+</html>

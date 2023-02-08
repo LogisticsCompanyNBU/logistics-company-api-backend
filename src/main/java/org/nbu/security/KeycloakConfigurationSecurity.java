@@ -35,7 +35,16 @@ public class KeycloakConfigurationSecurity extends KeycloakWebSecurityConfigurer
         http.csrf()
             .disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/api/companies/")
+            .antMatchers(HttpMethod.POST, "/api/companies/{companyId}/employees")
+            .permitAll()
+            .antMatchers(HttpMethod.POST, "/api/companies/{companyId}/clients")
+            .permitAll()
+            .antMatchers(HttpMethod.GET, "/api/companies/{companyId}/packages")
+            .permitAll()
+            .and()
+            .authorizeRequests()
+
+            .antMatchers(HttpMethod.POST, "/api/companies")
             .hasRole(ApplicationRole.SYSTEM_ADMIN)
             .and()
 
@@ -111,18 +120,59 @@ public class KeycloakConfigurationSecurity extends KeycloakWebSecurityConfigurer
             .and()
 
             .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/api/companies/{companyId}/locations/")
+            .antMatchers(HttpMethod.POST, "/api/companies/{companyId}/locations")
             .hasAnyRole(ApplicationRole.COMPANY_ADMIN)
             .and()
 
             .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/api/companies/{companyId}/locations/")
+            .antMatchers(HttpMethod.GET, "/api/companies/{companyId}/locations")
             .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE, ApplicationRole.COMPANY_CLIENT)
             .and()
 
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/api/companies/{companyId}/employees")
             .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.POST, "/api/companies/{companyId}/packages")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/api/companies/{companyId}/packages/{packageId}")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE, ApplicationRole.COMPANY_CLIENT)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.DELETE, "/api/companies/{companyId}/packages/{packageId}")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.POST, "/api/companies/{companyId}/packages/{packageId}/send")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/api/companies/{companyId}/employees/{employeeId}/packages")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE, ApplicationRole.COMPANY_CLIENT)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.PATCH, "/api/companies/{companyId}/packages/{packageId}/deliveries/{deliveryId}")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.DELETE, "/api/companies/{companyId}/packages/{packageId}/deliveries/{deliveryId}")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE)
+            .and()
+
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/api/companies/{companyId}/packages/{packageId}/deliveries/{deliveryId}")
+            .hasAnyRole(ApplicationRole.COMPANY_ADMIN, ApplicationRole.COMPANY_EMPLOYEE, ApplicationRole.COMPANY_CLIENT)
+
             .anyRequest()
             .authenticated()
             .and()
